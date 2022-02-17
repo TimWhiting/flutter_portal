@@ -3,13 +3,12 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 
 import 'custom_follower.dart';
 
 /// The widget where a [PortalEntry] is rendered.
 ///
-/// [Portal] can be considered as a reimplementation of [Overlay] to allow
+/// [Portal] can be considered as a re-implementation of [Overlay] to allow
 /// adding an [OverlayEntry] (now named [PortalEntry]) declaratively.
 ///
 /// [Portal] widget is used in co-ordination with [PortalEntry] widget to show
@@ -39,7 +38,7 @@ import 'custom_follower.dart';
 /// )
 /// ```
 ///
-/// This way, your modals/snackbars will stop being visible when a new route
+/// This way, your modals / snackbars will stop being visible when a new route
 /// is pushed.
 class Portal extends StatefulWidget {
   const Portal({Key? key, required this.child}) : super(key: key);
@@ -128,6 +127,7 @@ class _RenderPortalTheater extends RenderProxyBox {
       _overlayLink.theater = null;
       _overlayLink = value;
       value.theater = this;
+      value.theater!.markNeedsLayout();
     }
   }
 
@@ -499,7 +499,7 @@ class _RenderPortalEntry extends RenderProxyBox {
   _RenderPortalEntry(this._overlayLink, {required bool loosen})
       : assert(_overlayLink.theater != null),
         _loosen = loosen;
-
+  BoxConstraints? _currentConstraints;
   bool _needsAddEntryInTheater = false;
 
   _OverlayLink _overlayLink;
@@ -508,6 +508,8 @@ class _RenderPortalEntry extends RenderProxyBox {
     assert(value.theater != null);
     if (_overlayLink != value) {
       _overlayLink = value;
+      markNeedsLayout();
+    } else if (value.constraints != _currentConstraints) {
       markNeedsLayout();
     }
   }
@@ -570,10 +572,11 @@ class _RenderPortalEntry extends RenderProxyBox {
   void performLayout() {
     super.performLayout();
     if (branch != null) {
+      _currentConstraints = overlayLink.constraints;
       if (loosen) {
-        branch!.layout(overlayLink.constraints!.loosen());
+        branch!.layout(_currentConstraints!.loosen());
       } else {
-        branch!.layout(BoxConstraints.tight(overlayLink.constraints!.biggest));
+        branch!.layout(BoxConstraints.tight(_currentConstraints!.biggest));
       }
       if (_needsAddEntryInTheater) {
         _needsAddEntryInTheater = false;
