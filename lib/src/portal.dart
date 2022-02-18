@@ -127,7 +127,6 @@ class _RenderPortalTheater extends RenderProxyBox {
       _overlayLink.theater = null;
       _overlayLink = value;
       value.theater = this;
-      value.theater!.markNeedsLayout();
     }
   }
 
