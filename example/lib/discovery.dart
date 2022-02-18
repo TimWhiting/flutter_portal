@@ -28,21 +28,20 @@ class _MyAppState extends State<MyApp> {
               children: [
                 const Text('You have clicked the button this many times:'),
                 Text('$count', style: Theme.of(context).textTheme.headline4),
-                ElevatedButton(
-                  onPressed: () => setState(() => showDiscovery = true),
-                  child: const Text('Show discovery'),
-                )
+                Discovery(
+                    visible: showDiscovery,
+                    description: const Text('Click to increment the counter'),
+                    onClose: () => setState(() => showDiscovery = false),
+                    child: ElevatedButton(
+                      onPressed: () => setState(() => showDiscovery = true),
+                      child: const Text('Show discovery'),
+                    )),
               ],
             ),
           ),
-          floatingActionButton: Discovery(
-            visible: showDiscovery,
-            description: const Text('Click to increment the counter'),
-            onClose: () => setState(() => showDiscovery = false),
-            child: FloatingActionButton(
-              onPressed: _increment,
-              child: const Icon(Icons.add),
-            ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: _increment,
+            child: const Icon(Icons.add),
           ),
         ),
       ),
@@ -84,7 +83,7 @@ class Discovery extends StatelessWidget {
         portal: Stack(
           children: [
             CustomPaint(
-              painter: HolePainter(Theme.of(context).accentColor),
+              painter: HolePainter(Theme.of(context).colorScheme.secondary),
               child: TweenAnimationBuilder<double>(
                 duration: kThemeAnimationDuration,
                 curve: Curves.easeOut,
